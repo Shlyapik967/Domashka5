@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список задач</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список задач</h1>
+    <input type="text" id="taskInput" placeholder="Введите новую задачу">
+    <button id="addTaskButton">Добавить задачу</button>
+    
+    <ul id="taskList"></ul>
+    
+    <button id="showAll">Показать все</button>
+    <button id="showCompleted">Показать выполненные</button>
+    <button id="showPending">Показать невыполненные</button>
+
+    <script>
+        const taskInput = document.getElementById('taskInput');
+        const addTaskButton = document.getElementById('addTaskButton');
+        const taskList = document.getElementById('taskList');
+        const showAllButton = document.getElementById('showAll');
+        const showCompletedButton = document.getElementById('showCompleted');
+        const showPendingButton = document.getElementById('showPending');
+
+        let tasks = [];
+
+        function renderTasks(filter = 'all') {
+            taskList.innerHTML = '';
+            const filteredTasks = tasks.filter(task => {
+                if (filter === 'completed') return task.completed;
+                if (filter === 'pending') return !task.completed;
+                return true;
+            });
+
+            filteredTasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.textContent = task.text;
+                if (task.completed) li.classList.add('completed');
+
+                li.addEventListener('click', () => {
+                    task.completed = !task.completed;
+                    renderTasks(filter);
+                });
+
+                li.addEventListener('dblclick', () => {
+                    const newText = prompt('Редактировать задачу:', task.text);
+                    if (newText) {
+                        task.text = newText;
+                        renderTasks(filter);
+                    }
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Удалить';
+                deleteButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    tasks.splice(index, 1);
+                    renderTasks(filter);
+                });
+
+                li.appendChild(deleteButton);
+                taskList.appendChild(li);
+            });
+        }
+
+        addTaskButton.addEventListener('click', () => {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                tasks.push({ text: taskText, completed: false });
+                taskInput.value = '';
+                renderTasks();
+            }
+        });
+
+        showAllButton.addEventListener('click', () => renderTasks('all'));
+        showCompletedButton.addEventListener('click', () => renderTasks('completed'));
+        showPendingButton.addEventListener('click', () => renderTasks('pending'));
+    </script>
+</body>
+</html>

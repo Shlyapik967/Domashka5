@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сохранение имени в LocalStorage</title>
+</head>
+<body>
+    <h1>Введите ваше имя</h1>
+    <input type="text" id="nameInput" placeholder="Ваше имя">
+    <button id="saveNameButton">Сохранить имя</button>
+    
+    <h2 id="displayName"></h2>
+
+    <script>
+        const nameInput = document.getElementById('nameInput');
+        const saveNameButton = document.getElementById('saveNameButton');
+        const displayName = document.getElementById('displayName');
+
+        
+        function loadName() {
+            const savedName = localStorage.getItem('userName');
+            if (savedName) {
+                displayName.textContent = `Сохранённое имя: ${savedName}`;
+            }
+        }
+
+        
+        saveNameButton.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            if (name) {
+                localStorage.setItem('userName', name);
+                displayName.textContent = `Сохранённое имя: ${name}`;
+                nameInput.value = ''; 
+            }
+        });
+
+        
+        window.onload = loadName;
+    </script>
+</body>
+</html>
